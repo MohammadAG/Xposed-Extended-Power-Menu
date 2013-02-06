@@ -89,6 +89,19 @@ public class ExtendedPowerMenu implements IXposedHookZygoteInit, IXposedHookLoad
 		} catch (Throwable t) {
 			XposedBridge.log(t);
 		}
+		
+		try {
+			Class<?> globalActionsClass = XposedHelpers.findClass("com.android.internal.policy.impl.GlobalActions", ExtendedPowerMenu.class.getClassLoader());
+			Constructor<?> constructor = globalActionsClass.getConstructor(XposedHelpers.findClass("com.android.internal.policy.impl.GlobalActions", ExtendedPowerMenu.class.getClassLoader()));
+			XposedBridge.hookMethod(constructor, new XC_MethodHook() {
+				@Override
+				protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+					mContext = (Context) getObjectField(param.thisObject, "mContext");
+				}
+			});
+		} catch (Throwable t) {
+			XposedBridge.log(t);
+		}
 	}
 
 }
